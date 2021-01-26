@@ -30,7 +30,7 @@ public class Operaciones {
 		String matricula = "M" + aleatorio;
 
 		while (running) {
-			System.out.println("Status: (Profesor/Alumno)");
+			System.out.println("Indique si es Alumno o Profesor");
 			String status = sc.nextLine();
 
 			if (status.equalsIgnoreCase("alumno")) {
@@ -92,6 +92,8 @@ public class Operaciones {
 						+ ", " + ((Persona) o).getGrupo().toUpperCase());
 			}
 		}
+
+		grabarPersona(listaPersona);
 	}
 
 	public void grabarPersona(ArrayList<Persona> listaPersona) {
@@ -122,54 +124,28 @@ public class Operaciones {
 
 		}
 
-		for (Persona o : listaPersona) {
-			if (((Persona) o).getStatus().equalsIgnoreCase("profesor")) {
-				System.out.println(((Persona) o).getStatus().toUpperCase() + " " + ((Persona) o).getNombre() + ", "
-						+ ((Persona) o).getDia() + " del " + ((Persona) o).getMes() + ", "
-						+ ((Profesor) o).getAsignatura() + ", " + ((Persona) o).getGrupo().toUpperCase());
-			} else {
-				System.out.println(((Persona) o).getStatus().toUpperCase() + " " + ((Persona) o).getNombre() + ", "
-						+ ((Persona) o).getDia() + " del " + ((Persona) o).getMes() + ", " + ((Alumno) o).getMatricula()
-						+ ", " + ((Persona) o).getGrupo().toUpperCase());
+		miFile = new File("ficheros/personas.dat");
+
+		oos = null;
+
+		try {
+			fos = new FileOutputStream(miFile);
+			oos = new ObjectOutputStream(fos);
+			for (int i = 0; i < listaPersona.size(); i++) {
+				Persona personas = listaPersona.get(i);
+				System.out.println(personas.getNombre());
+				oos.writeObject(personas);
 			}
-		}
-
-		System.out.println("\nDesea grabarlos en la memoria? Si/No");
-		String salir = sc.nextLine();
-
-		if (salir.equalsIgnoreCase("si")) {
-
-			miFile = new File("ficheros/personas.dat");
-
-			oos = null;
-
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
 			try {
-				fos = new FileOutputStream(miFile);
-				oos = new ObjectOutputStream(fos);
-				for (int i = 0; i < listaPersona.size(); i++) {
-					Persona personas = listaPersona.get(i);
-					System.out.println(personas.getNombre());
-					oos.writeObject(personas);
-
-					System.out.println("Guardado correctamente");
-					System.out.println("**********************");
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					oos.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
+				oos.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			}
-		} else if (salir.equalsIgnoreCase("no")) {
-			System.out.println("\nNo se ha guardado");
-			Main.menuPrincipal();
-		} else {
-			System.out.println("Ha habido un error");
 		}
 
 		listaPersona.clear();
